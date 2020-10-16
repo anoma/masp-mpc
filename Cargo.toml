@@ -1,7 +1,11 @@
 [package]
-name = "sapling-mpc"
+name = "masp_mpc"
 version = "0.2.0"
-authors = ["Sean Bowe <ewillbefull@gmail.com>"]
+authors = ["Sean Bowe <ewillbefull@gmail.com>", "joe <joe@cryptium.ch>"]
+edition = "2018"
+
+[lib]
+crate-type = ["lib",]
 
 [[bin]]
 name = "new"
@@ -16,27 +20,42 @@ name = "beacon"
 required-features = ["beacon"]
 
 [[bin]]
-name = "compute"
-
-[[bin]]
 name = "verify_transform"
 
 [[bin]]
 name = "split_params"
 
 [dependencies]
-phase2 = "0.2.1"
-pairing = "0.14"
 rand = "0.4"
-blake2-rfc = "0.2"
+blake2 = "0.9"
+bellman = { version = "0.8", default-features = false, features = ["groth16"] }
+ff = "0.8" 
+bls12_381 = "0.3"
+exitcode = "1.1.2"
+hex = "0.4.2"
+itertools = "0.9"
+num-bigint = "0.3"
+num-traits = "0.2.12"
+byteorder = "1"
+sha2 = "0.9"
+blake2s_simd = "0.5"
 
-[dependencies.byteorder]
-version = "1"
-optional = true
+[dependencies.bellman_ce]
+git = "https://github.com/metastatedev/phase2-bls12_381"
+branch = "main"
 
-[dependencies.sapling-crypto]
-git = "https://github.com/zcash-hackworks/sapling-crypto"
-rev = "eb409fa3cf8df215ae8d35f5e385751a0c5ffb85"
+[dependencies.phase2]
+git = "https://github.com/metastatedev/phase2-bls12_381"
+branch = "main"
+
+[dependencies.pairing]
+git = "https://github.com/metastatedev/phase2-bls12_381"
+package = "pairing_ce"
+branch = "main"
+
+[dependencies.masp_proofs]
+git = "https://github.com/metastatedev/librustzcash"
+rev = "b64af55d955a1bd0a77389f0b9c66f180815e73b"
 optional = true
 
 [dependencies.hex-literal]
@@ -44,6 +63,6 @@ version = "0.1"
 optional = true
 
 [features]
-verification = ["sapling-crypto"]
-u128-support = ["pairing/u128-support"]
-beacon = ["byteorder", "hex-literal"]
+verification = ["masp_proofs"]
+#u128-support = ["pairing/u128-support"]
+beacon = ["hex-literal"]

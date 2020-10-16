@@ -1,65 +1,117 @@
-extern crate phase2;
-extern crate sapling_crypto;
-extern crate pairing;
-
+use masp_mpc::bridge::BridgeCircuit;
+use phase2::parameters::MPCParameters;
 use std::fs::File;
-use std::io::BufWriter;
+use std::marker::PhantomData;
 
 fn main() {
-    let jubjub_params = sapling_crypto::jubjub::JubjubBls12::new();
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+        println!("Usage: \n<out_params.params> <path/to/phase1radix>");
+        std::process::exit(exitcode::USAGE);
+    }
+    let params_filename = &args[1];
+    let radix_directory = &args[2];
 
-    let params = File::create("params").unwrap();
-    let mut params = BufWriter::with_capacity(1024 * 1024, params);
+    let should_filter_points_at_infinity = false;
 
-    // Sapling spend circuit
-    phase2::MPCParameters::new(sapling_crypto::circuit::sapling::Spend {
-        params: &jubjub_params,
-        value_commitment: None,
-        proof_generation_key: None,
-        payment_address: None,
-        commitment_randomness: None,
-        ar: None,
-        auth_path: vec![None; 32], // Tree depth is 32 for sapling
-        anchor: None
-    }).unwrap().write(&mut params).unwrap();
+    println!("Creating initial parameters for Spend...");
 
-    // Sapling output circuit
-    phase2::MPCParameters::new(sapling_crypto::circuit::sapling::Output {
-        params: &jubjub_params,
-        value_commitment: None,
-        payment_address: None,
-        commitment_randomness: None,
-        esk: None
-    }).unwrap().write(&mut params).unwrap();
+    let mut f = File::create(params_filename).unwrap();
 
-    // Sprout joinsplit circuit
-    phase2::MPCParameters::new(sapling_crypto::circuit::sprout::JoinSplit {
-        vpub_old: None,
-        vpub_new: None,
-        h_sig: None,
-        phi: None,
-        inputs: vec![sapling_crypto::circuit::sprout::JSInput {
-            value: None,
-            a_sk: None,
-            rho: None,
-            r: None,
-            auth_path: [None; 29] // Depth is 29 for Sprout
-        }, sapling_crypto::circuit::sprout::JSInput {
-            value: None,
-            a_sk: None,
-            rho: None,
-            r: None,
-            auth_path: [None; 29] // Depth is 29 for Sprout
-        }],
-        outputs: vec![sapling_crypto::circuit::sprout::JSOutput {
-            value: None,
-            a_pk: None,
-            r: None
-        }, sapling_crypto::circuit::sprout::JSOutput {
-            value: None,
-            a_pk: None,
-            r: None
-        }],
-        rt: None,
-    }).unwrap().write(&mut params).unwrap();
+    // MASP spend circuit
+    let params = MPCParameters::new(
+        BridgeCircuit {
+            circuit: masp_proofs::circuit::sapling::Spend {
+                value_commitment: None,
+                proof_generation_key: None,
+                payment_address: None,
+                commitment_randomness: None,
+                ar: None,
+                auth_path: vec![None; 32], // Tree depth is 32 for sapling
+                anchor: None,
+            },
+            _scalar: PhantomData::<bls12_381::Scalar>,
+        },
+        should_filter_points_at_infinity,
+        radix_directory,
+    )
+    .unwrap();
+    println!("Writing initial Spend parameters to {}.", params_filename);
+
+    params.write(&mut f).expect("unable to write Spend params");
+
+    println!("Creating initial parameters for Output...");
+
+    // MASP output circuit
+    let params = MPCParameters::new(
+        BridgeCircuit {
+            circuit: masp_proofs::circuit::sapling::Output {
+                value_commitment: None,
+                payment_address: None,
+                commitment_randomness: None,
+                esk: None,
+                asset_identifier: vec![None; 256],
+            },
+            _scalar: PhantomData::<bls12_381::Scalar>,
+        },
+        should_filter_points_at_infinity,
+        radix_directory,
+    )
+    .unwrap();
+
+    println!("Writing initial Output parameters to {}.", params_filename);
+
+    params.write(&mut f).expect("unable to write Output params");
+}
+
+#[test]
+fn test_hash() {
+    use bellman_ce::pairing::bls12_381::Bls12;
+    use bellman_ce::Circuit;
+    {
+        let mut cs = masp_mpc::test::TestConstraintSystem::<Bls12>::new();
+
+        BridgeCircuit {
+            circuit: masp_proofs::circuit::sapling::Spend {
+                value_commitment: None,
+                proof_generation_key: None,
+                payment_address: None,
+                commitment_randomness: None,
+                ar: None,
+                auth_path: vec![None; 32], // Tree depth is 32 for sapling
+                anchor: None,
+            },
+            _scalar: PhantomData::<bls12_381::Scalar>,
+        }
+        .synthesize(&mut cs)
+        .unwrap();
+
+        assert_eq!(cs.num_constraints(), 100637);
+        assert_eq!(
+            cs.hash(),
+            "34e4a634c80e4e4c6250e63b7855532e60b36d1371d4d7b1163218b69f09eb3d"
+        );
+    }
+    {
+        let mut cs = masp_mpc::test::TestConstraintSystem::<Bls12>::new();
+
+        BridgeCircuit {
+            circuit: masp_proofs::circuit::sapling::Output {
+                value_commitment: None,
+                payment_address: None,
+                commitment_randomness: None,
+                esk: None,
+                asset_identifier: vec![None; 256],
+            },
+            _scalar: PhantomData::<bls12_381::Scalar>,
+        }
+        .synthesize(&mut cs)
+        .unwrap();
+
+        assert_eq!(cs.num_constraints(), 31205);
+        assert_eq!(
+            cs.hash(),
+            "93e445d7858e98c7138558df341f020aedfe75893535025587d64731e244276a"
+        );
+    }
 }

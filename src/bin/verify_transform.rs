@@ -1,55 +1,45 @@
-extern crate phase2;
-extern crate pairing;
-extern crate blake2_rfc;
-
+use blake2::{Blake2b, Digest};
+use phase2::parameters::{verify_contribution, MPCParameters};
 use std::fs::File;
 use std::io::BufReader;
-use blake2_rfc::blake2b::Blake2b;
 
 fn main() {
-    let params = File::open("params").unwrap();
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+        println!("Usage: \n<in_params.params> <out_params.params>");
+        std::process::exit(exitcode::USAGE);
+    }
+    let params = File::open(&args[1]).unwrap();
     let mut params = BufReader::with_capacity(1024 * 1024, params);
 
-    let new_params = File::open("new_params").unwrap();
+    let new_params = File::open(&args[2]).unwrap();
     let mut new_params = BufReader::with_capacity(1024 * 1024, new_params);
 
-    let sapling_spend = phase2::MPCParameters::read(&mut params, false)
+    let masp_spend = MPCParameters::read(&mut params, false, true)
         .expect("couldn't deserialize Sapling Spend params");
 
-    let sapling_output = phase2::MPCParameters::read(&mut params, false)
+    let masp_output = MPCParameters::read(&mut params, false, true)
         .expect("couldn't deserialize Sapling Output params");
 
-    let sprout_joinsplit = phase2::MPCParameters::read(&mut params, false)
-        .expect("couldn't deserialize Sprout JoinSplit params");
-
-    let new_sapling_spend = phase2::MPCParameters::read(&mut new_params, true)
+    let new_masp_spend = MPCParameters::read(&mut new_params, false, true)
         .expect("couldn't deserialize Sapling Spend new_params");
 
-    let new_sapling_output = phase2::MPCParameters::read(&mut new_params, true)
+    let new_masp_output = MPCParameters::read(&mut new_params, false, true)
         .expect("couldn't deserialize Sapling Output new_params");
 
-    let new_sprout_joinsplit = phase2::MPCParameters::read(&mut new_params, true)
-        .expect("couldn't deserialize Sprout JoinSplit new_params");
-
-    let h1 = match phase2::verify_contribution(&sapling_spend, &new_sapling_spend) {
+    let h1 = match verify_contribution(&masp_spend, &new_masp_spend) {
         Ok(hash) => hash,
-        Err(_) => panic!("invalid transformation!")
+        Err(_) => panic!("invalid transformation!"),
     };
 
-    let h2 = match phase2::verify_contribution(&sapling_output, &new_sapling_output) {
+    let h2 = match verify_contribution(&masp_output, &new_masp_output) {
         Ok(hash) => hash,
-        Err(_) => panic!("invalid transformation!")
+        Err(_) => panic!("invalid transformation!"),
     };
 
-    let h3 = match phase2::verify_contribution(&sprout_joinsplit, &new_sprout_joinsplit) {
-        Ok(hash) => hash,
-        Err(_) => panic!("invalid transformation!")
-    };
-
-    let mut h = Blake2b::new(64);
+    let mut h = Blake2b::new();
     h.update(&h1);
     h.update(&h2);
-    h.update(&h3);
     let h = h.finalize();
 
     println!("{}", into_hex(h.as_ref()));

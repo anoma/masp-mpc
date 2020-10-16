@@ -1,84 +1,75 @@
-extern crate phase2;
-extern crate sapling_crypto;
-extern crate pairing;
-extern crate blake2_rfc;
-
+use blake2::{Blake2b, Digest};
+use masp_mpc::bridge::BridgeCircuit;
+use phase2::parameters::MPCParameters;
 use std::fs::File;
 use std::io::BufReader;
-use blake2_rfc::blake2b::Blake2b;
+use std::marker::PhantomData;
 
 fn main() {
-    let jubjub_params = sapling_crypto::jubjub::JubjubBls12::new();
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+        println!("Usage: \n<params.params> <path/to/phase1radix>");
+        std::process::exit(exitcode::USAGE);
+    }
+    let params_filename = &args[1];
+    let radix_directory = &args[2];
 
-    let params = File::open("params").unwrap();
-    let mut params = BufReader::with_capacity(1024 * 1024, params);
+    let should_filter_points_at_infinity = false;
 
-    let sapling_spend = phase2::MPCParameters::read(&mut params, true)
-        .expect("couldn't deserialize Sapling Spend params");
+    let current_params = File::open(params_filename).expect("couldn't open params");
+    let mut current_params = BufReader::with_capacity(1024 * 1024, current_params);
 
-    let sapling_output = phase2::MPCParameters::read(&mut params, true)
-        .expect("couldn't deserialize Sapling Output params");
+    let masp_spend =
+        MPCParameters::read(&mut current_params, should_filter_points_at_infinity, true)
+            .expect("couldn't deserialize MASP Spend params");
 
-    let sprout_joinsplit = phase2::MPCParameters::read(&mut params, true)
-        .expect("couldn't deserialize Sprout JoinSplit params");
+    let masp_output =
+        MPCParameters::read(&mut current_params, should_filter_points_at_infinity, true)
+            .expect("couldn't deserialize MASP Output params");
 
-    let sapling_spend_contributions = sapling_spend.verify(sapling_crypto::circuit::sapling::Spend {
-        params: &jubjub_params,
-        value_commitment: None,
-        proof_generation_key: None,
-        payment_address: None,
-        commitment_randomness: None,
-        ar: None,
-        auth_path: vec![None; 32], // Tree depth is 32 for sapling
-        anchor: None
-    }).expect("parameters are invalid");
+    let masp_spend_contributions = masp_spend
+        .verify(
+            BridgeCircuit {
+                circuit: masp_proofs::circuit::sapling::Spend {
+                    value_commitment: None,
+                    proof_generation_key: None,
+                    payment_address: None,
+                    commitment_randomness: None,
+                    ar: None,
+                    auth_path: vec![None; 32], // Tree depth is 32 for sapling
+                    anchor: None,
+                },
+                _scalar: PhantomData::<bls12_381::Scalar>,
+            },
+            should_filter_points_at_infinity,
+            radix_directory,
+        )
+        .expect("Spend parameters are invalid");
 
-    let sapling_output_contributions = sapling_output.verify(sapling_crypto::circuit::sapling::Output {
-        params: &jubjub_params,
-        value_commitment: None,
-        payment_address: None,
-        commitment_randomness: None,
-        esk: None
-    }).expect("parameters are invalid");
+    let masp_output_contributions = masp_output
+        .verify(
+            BridgeCircuit {
+                circuit: masp_proofs::circuit::sapling::Output {
+                    value_commitment: None,
+                    payment_address: None,
+                    commitment_randomness: None,
+                    esk: None,
+                    asset_identifier: vec![None; 256],
+                },
+                _scalar: PhantomData::<bls12_381::Scalar>,
+            },
+            should_filter_points_at_infinity,
+            radix_directory,
+        )
+        .expect("Output parameters are invalid");
 
-    let sprout_joinsplit_contributions = sprout_joinsplit.verify(sapling_crypto::circuit::sprout::JoinSplit {
-        vpub_old: None,
-        vpub_new: None,
-        h_sig: None,
-        phi: None,
-        inputs: vec![sapling_crypto::circuit::sprout::JSInput {
-            value: None,
-            a_sk: None,
-            rho: None,
-            r: None,
-            auth_path: [None; 29] // Depth is 29 for Sprout
-        }, sapling_crypto::circuit::sprout::JSInput {
-            value: None,
-            a_sk: None,
-            rho: None,
-            r: None,
-            auth_path: [None; 29] // Depth is 29 for Sprout
-        }],
-        outputs: vec![sapling_crypto::circuit::sprout::JSOutput {
-            value: None,
-            a_pk: None,
-            r: None
-        }, sapling_crypto::circuit::sprout::JSOutput {
-            value: None,
-            a_pk: None,
-            r: None
-        }],
-        rt: None,
-    }).expect("parameters are invalid");
-
-    for ((a, b), c) in sapling_spend_contributions.into_iter()
-        .zip(sapling_output_contributions.into_iter())
-        .zip(sprout_joinsplit_contributions)
+    for (a, b) in masp_spend_contributions
+        .into_iter()
+        .zip(masp_output_contributions.into_iter())
     {
-        let mut h = Blake2b::new(64);
+        let mut h = Blake2b::new();
         h.update(&a);
         h.update(&b);
-        h.update(&c);
         let h = h.finalize();
 
         println!("{}", into_hex(h.as_ref()));
