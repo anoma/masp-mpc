@@ -78,20 +78,20 @@ fn main() {
         .read(true)
         .open(in_params_filename)
         .expect("unable to open.");
-    let mut spend_params = MPCParameters::read(&reader, true).expect("unable to read params");
+    let mut spend_params = MPCParameters::read(&reader, false).expect("unable to read params");
 
     println!("Contributing to Spend {}...", in_params_filename);
 
     let spend_hash = spend_params.contribute(&mut rng, &0);
 
-    let mut output_params = MPCParameters::read(&reader, true).expect("unable to read params");
+    let mut output_params = MPCParameters::read(&reader, false).expect("unable to read params");
 
     println!("Contributing to Output {}...", in_params_filename);
 
     let output_hash = output_params.contribute(&mut rng, &0);
 
     let mut convert_params =
-        MPCParameters::read(&reader, true).expect("unable to read MASP Convert params");
+        MPCParameters::read(&reader, false).expect("unable to read MASP Convert params");
 
     println!("Contributing to MASP Convert {}...", in_params_filename);
     let mut progress_update_interval: u32 = 0;

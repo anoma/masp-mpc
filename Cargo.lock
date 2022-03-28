@@ -635,7 +635,7 @@ dependencies = [
 [[package]]
 name = "masp-phase2"
 version = "0.2.3"
-source = "git+https://github.com/heliaxdev/masp-phase2?branch=main#d5e124ff7a08145414c9ece1e0d5424f7d268322"
+source = "git+https://github.com/heliaxdev/masp-phase2?branch=main#0c637e7dee775fee1ca35e2ec8601712b5996539"
 dependencies = [
  "bellman",
  "blake2",

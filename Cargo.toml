@@ -58,3 +58,8 @@ optional = true
 verification = ["masp_proofs"]
 #u128-support = ["pairing/u128-support"]
 beacon = ["hex-literal"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
