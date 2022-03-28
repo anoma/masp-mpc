@@ -1,7 +1,5 @@
-use masp_mpc::bridge::BridgeCircuit;
-use phase2::parameters::MPCParameters;
+use masp_phase2::MPCParameters;
 use std::fs::File;
-use std::marker::PhantomData;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -10,78 +8,99 @@ fn main() {
         std::process::exit(exitcode::USAGE);
     }
     let params_filename = &args[1];
-    let radix_directory = &args[2];
+    //let radix_directory = &args[2];
 
-    let should_filter_points_at_infinity = false;
+    //let should_filter_points_at_infinity = false;
 
-    println!("Creating initial parameters for Spend...");
+    println!("Creating initial parameters for MASP Spend...");
 
     let mut f = File::create(params_filename).unwrap();
 
     // MASP spend circuit
-    let params = MPCParameters::new(
-        BridgeCircuit {
-            circuit: masp_proofs::circuit::sapling::Spend {
-                value_commitment: None,
-                proof_generation_key: None,
-                payment_address: None,
-                commitment_randomness: None,
-                ar: None,
-                auth_path: vec![None; 32], // Tree depth is 32 for sapling
-                anchor: None,
-            },
-            _scalar: PhantomData::<bls12_381::Scalar>,
+    let spend_params = MPCParameters::new(
+        masp_proofs::circuit::sapling::Spend {
+            value_commitment: None,
+            proof_generation_key: None,
+            payment_address: None,
+            commitment_randomness: None,
+            ar: None,
+            auth_path: vec![None; 32], // Tree depth is 32 for sapling
+            anchor: None,
         },
-        should_filter_points_at_infinity,
-        radix_directory,
+        //should_filter_points_at_infinity,
+        //radix_directory,
     )
     .unwrap();
-    println!("Writing initial Spend parameters to {}.", params_filename);
+    println!(
+        "Writing initial MASP Spend parameters to {}.",
+        params_filename
+    );
 
-    params.write(&mut f).expect("unable to write Spend params");
+    spend_params
+        .write(&mut f)
+        .expect("unable to write MASP Spend params");
 
-    println!("Creating initial parameters for Output...");
+    println!("Creating initial parameters for MASP Output...");
 
     // MASP output circuit
-    let params = MPCParameters::new(
-        BridgeCircuit {
-            circuit: masp_proofs::circuit::sapling::Output {
-                value_commitment: None,
-                payment_address: None,
-                commitment_randomness: None,
-                esk: None,
-                asset_identifier: vec![None; 256],
-            },
-            _scalar: PhantomData::<bls12_381::Scalar>,
+    let output_params = MPCParameters::new(
+        masp_proofs::circuit::sapling::Output {
+            value_commitment: None,
+            payment_address: None,
+            commitment_randomness: None,
+            esk: None,
+            asset_identifier: vec![None; 256],
         },
-        should_filter_points_at_infinity,
-        radix_directory,
+        //should_filter_points_at_infinity,
+        //radix_directory,
     )
     .unwrap();
 
-    println!("Writing initial Output parameters to {}.", params_filename);
+    println!(
+        "Writing initial MASP Output parameters to {}.",
+        params_filename
+    );
 
-    params.write(&mut f).expect("unable to write Output params");
+    output_params
+        .write(&mut f)
+        .expect("unable to write MASP Output params");
+
+    // MASP Convert circuit
+    let convert_params = MPCParameters::new(
+        masp_proofs::circuit::convert::Convert {
+            value_commitment: None,
+            auth_path: vec![None; 32], // Tree depth is 32 for sapling
+            anchor: None,
+        },
+        //should_filter_points_at_infinity,
+        //radix_directory,
+    )
+    .unwrap();
+    println!(
+        "Writing initial MASP Convert parameters to {}.",
+        params_filename
+    );
+
+    convert_params
+        .write(&mut f)
+        .expect("unable to write MASP Convert params");
 }
 
 #[test]
 fn test_hash() {
-    use bellman_ce::pairing::bls12_381::Bls12;
-    use bellman_ce::Circuit;
+    use bellman::Circuit;
+    use bls12_381::Bls12;
     {
-        let mut cs = masp_mpc::test::TestConstraintSystem::<Bls12>::new();
+        let mut cs = bellman::gadgets::test::TestConstraintSystem::<Bls12>::new();
 
-        BridgeCircuit {
-            circuit: masp_proofs::circuit::sapling::Spend {
-                value_commitment: None,
-                proof_generation_key: None,
-                payment_address: None,
-                commitment_randomness: None,
-                ar: None,
-                auth_path: vec![None; 32], // Tree depth is 32 for sapling
-                anchor: None,
-            },
-            _scalar: PhantomData::<bls12_381::Scalar>,
+        masp_proofs::circuit::sapling::Spend {
+            value_commitment: None,
+            proof_generation_key: None,
+            payment_address: None,
+            commitment_randomness: None,
+            ar: None,
+            auth_path: vec![None; 32], // Tree depth is 32 for sapling
+            anchor: None,
         }
         .synthesize(&mut cs)
         .unwrap();
@@ -93,17 +112,14 @@ fn test_hash() {
         );
     }
     {
-        let mut cs = masp_mpc::test::TestConstraintSystem::<Bls12>::new();
+        let mut cs = bellman::gadgets::test::TestConstraintSystem::<Bls12>::new();
 
-        BridgeCircuit {
-            circuit: masp_proofs::circuit::sapling::Output {
-                value_commitment: None,
-                payment_address: None,
-                commitment_randomness: None,
-                esk: None,
-                asset_identifier: vec![None; 256],
-            },
-            _scalar: PhantomData::<bls12_381::Scalar>,
+        masp_proofs::circuit::sapling::Output {
+            value_commitment: None,
+            payment_address: None,
+            commitment_randomness: None,
+            esk: None,
+            asset_identifier: vec![None; 256],
         }
         .synthesize(&mut cs)
         .unwrap();
@@ -112,6 +128,23 @@ fn test_hash() {
         assert_eq!(
             cs.hash(),
             "93e445d7858e98c7138558df341f020aedfe75893535025587d64731e244276a"
+        );
+    }
+    {
+        let mut cs = bellman::gadgets::test::TestConstraintSystem::<Bls12>::new();
+
+        masp_proofs::circuit::convert::Convert {
+            value_commitment: None,
+            auth_path: vec![None; 32], // Tree depth is 32 for sapling
+            anchor: None,
+        }
+        .synthesize(&mut cs)
+        .unwrap();
+
+        assert_eq!(cs.num_constraints(), 47358);
+        assert_eq!(
+            cs.hash(),
+            "f74b47ef6e59081548f81f5806bd15b1f4a65d2e57681e6db2b8db7eef2ff814"
         );
     }
 }

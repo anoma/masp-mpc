@@ -26,40 +26,32 @@ name = "verify_transform"
 name = "split_params"
 
 [dependencies]
-rand = "0.4"
-blake2 = "0.9"
-bellman = { version = "0.8", default-features = false, features = ["groth16"] }
-ff = "0.8" 
-bls12_381 = "0.3"
+rand = "0.8.5"
+blake2 = "0.10.4"
+bellman = { version = "0.11.1", features = ["groth16", "multicore"] }
+ff = "0.11.0" 
+bls12_381 = "0.6"
 exitcode = "1.1.2"
 hex = "0.4.2"
-itertools = "0.9"
-num-bigint = "0.3"
+itertools = "0.10.3"
+num-bigint = "0.4.3"
 num-traits = "0.2.12"
 byteorder = "1"
-sha2 = "0.9"
-blake2s_simd = "0.5"
+sha2 = "0.10.2"
+blake2s_simd = "1.0.0"
+rand_chacha = "0.3.1"
 
-[dependencies.bellman_ce]
-git = "https://github.com/metastatedev/phase2-bls12_381"
-branch = "main"
-
-[dependencies.phase2]
-git = "https://github.com/metastatedev/phase2-bls12_381"
-branch = "main"
-
-[dependencies.pairing]
-git = "https://github.com/metastatedev/phase2-bls12_381"
-package = "pairing_ce"
+[dependencies.masp-phase2]
+git = "https://github.com/heliaxdev/masp-phase2"
 branch = "main"
 
 [dependencies.masp_proofs]
-git = "https://github.com/metastatedev/librustzcash"
-rev = "b64af55d955a1bd0a77389f0b9c66f180815e73b"
+git = "https://github.com/heliaxdev/masp"
+#rev = "b64af55d955a1bd0a77389f0b9c66f180815e73b"
 optional = true
 
 [dependencies.hex-literal]
-version = "0.1"
+version = "0.3.4"
 optional = true
 
 [features]

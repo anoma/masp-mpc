@@ -1,6 +1,6 @@
-use blake2::{Blake2b, Digest};
+use blake2::{Blake2b512, Digest};
 use itertools::Itertools;
-use phase2::parameters::MPCParameters;
+use masp_phase2::MPCParameters;
 use std::fs::File;
 use std::fs::OpenOptions;
 
@@ -27,12 +27,13 @@ fn main() {
     // Create an RNG based on a mixture of system randomness and user provided randomness
     let mut rng = {
         use byteorder::{BigEndian, ReadBytesExt};
-        use rand::chacha::ChaChaRng;
-        use rand::{OsRng, Rng, SeedableRng};
+        use rand::{Rng, SeedableRng};
+        use rand_chacha::ChaChaRng;
+        use std::convert::TryInto;
 
         let h = {
-            let mut system_rng = OsRng::new().unwrap();
-            let mut h = Blake2b::new();
+            let mut system_rng = rand::thread_rng(); //OsRng::new().unwrap();
+            let mut h = Blake2b512::new();
 
             // Gather 1024 bytes of entropy from the system
             for _ in 0..1024 {
@@ -45,17 +46,7 @@ fn main() {
             h.finalize()
         };
 
-        let mut digest = &h[..];
-
-        // Interpret the first 32 bytes of the digest as 8 32-bit words
-        let mut seed = [0u32; 8];
-        for i in 0..8 {
-            seed[i] = digest
-                .read_u32::<BigEndian>()
-                .expect("digest is large enough for this to work");
-        }
-
-        ChaChaRng::from_seed(&seed)
+        ChaChaRng::from_seed(h[0..32].try_into().unwrap())
     };
 
     let reader = OpenOptions::new()
@@ -63,10 +54,10 @@ fn main() {
         .open(in_params_filename)
         .expect("unable to open.");
 
-    let mut spend_params = MPCParameters::read(&reader, disallow_points_at_infinity, true)
-        .expect("unable to read params");
+    let mut spend_params =
+        MPCParameters::read(&reader, true).expect("unable to read MASP Spend params");
 
-    println!("Contributing to Spend {}...", in_params_filename);
+    println!("Contributing to MASP Spend {}...", in_params_filename);
     let mut progress_update_interval: u32 = 0;
     if print_progress {
         let parsed = args[5].parse::<u32>();
@@ -76,10 +67,10 @@ fn main() {
     }
     let spend_hash = spend_params.contribute(&mut rng, &progress_update_interval);
 
-    let mut output_params = MPCParameters::read(&reader, disallow_points_at_infinity, true)
-        .expect("unable to read params");
+    let mut output_params =
+        MPCParameters::read(&reader, true).expect("unable to read MASP Output params");
 
-    println!("Contributing to Output {}...", in_params_filename);
+    println!("Contributing to MASP Output {}...", in_params_filename);
     let mut progress_update_interval: u32 = 0;
     if print_progress {
         let parsed = args[5].parse::<u32>();
@@ -89,28 +80,53 @@ fn main() {
     }
     let output_hash = output_params.contribute(&mut rng, &progress_update_interval);
 
-    let mut h = Blake2b::new();
+    let mut convert_params =
+        MPCParameters::read(&reader, true).expect("unable to read MASP Convert params");
+
+    println!("Contributing to MASP Convert {}...", in_params_filename);
+    let mut progress_update_interval: u32 = 0;
+    if print_progress {
+        let parsed = args[5].parse::<u32>();
+        if !parsed.is_err() {
+            progress_update_interval = parsed.unwrap();
+        }
+    }
+    let convert_hash = convert_params.contribute(&mut rng, &progress_update_interval);
+
+    let mut h = Blake2b512::new();
     h.update(&spend_hash);
     h.update(&output_hash);
+    h.update(&convert_hash);
     let h = h.finalize();
 
     println!("Contribution hash: 0x{:02x}", h.iter().format(""));
 
     let mut f = File::create(out_params_filename).unwrap();
 
-    println!("Writing Spend parameters to {}.", out_params_filename);
+    println!("Writing MASP Spend parameters to {}.", out_params_filename);
     spend_params
         .write(&mut f)
-        .expect("failed to write updated Spend parameters");
+        .expect("failed to write updated MASP Spend parameters");
     if print_progress {
-        println!("wrote Spend");
+        println!("wrote MASP Spend");
     }
 
-    println!("Writing Output parameters to {}.", out_params_filename);
+    println!("Writing MASP Output parameters to {}.", out_params_filename);
     output_params
         .write(&mut f)
-        .expect("failed to write updated Output parameters");
+        .expect("failed to write updated MASP Output parameters");
     if print_progress {
-        println!("wrote Output");
+        println!("wrote MASP Output");
+    }
+
+    println!(
+        "Writing MASP Convert parameters to {}.",
+        out_params_filename
+    );
+    convert_params
+        .write(&mut f)
+        .expect("failed to write updated MASP Convert parameters");
+    if print_progress {
+        println!("wrote MASP Convert");
     }
 }

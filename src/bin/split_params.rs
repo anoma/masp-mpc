@@ -1,6 +1,6 @@
 //! This binary just splits the parameters up into separate files.
 
-use phase2::parameters::MPCParameters;
+use masp_phase2::MPCParameters;
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
@@ -13,11 +13,14 @@ fn main() {
     let current_params = File::open(&args[1]).expect("couldn't open params");
     let mut current_params = BufReader::with_capacity(1024 * 1024, current_params);
 
-    let masp_spend = MPCParameters::read(&mut current_params, false, true)
+    let masp_spend = MPCParameters::read(&mut current_params, true)
         .expect("couldn't deserialize MASP Spend params");
 
-    let masp_output = MPCParameters::read(&mut current_params, false, true)
+    let masp_output = MPCParameters::read(&mut current_params, true)
         .expect("couldn't deserialize MASP Output params");
+
+    let masp_convert = MPCParameters::read(&mut current_params, true)
+        .expect("couldn't deserialize MASP Convert params");
 
     {
         let f = File::create("masp-spend.params").expect("couldn't create `./masp-spend.params`");
@@ -33,5 +36,14 @@ fn main() {
         masp_output
             .write(&mut f)
             .expect("couldn't write new MASP Output params");
+    }
+
+    {
+        let f =
+            File::create("masp-convert.params").expect("couldn't create `./masp-convert.params`");
+        let mut f = BufWriter::with_capacity(1024 * 1024, f);
+        masp_convert
+            .write(&mut f)
+            .expect("couldn't write new MASP Convert params");
     }
 }

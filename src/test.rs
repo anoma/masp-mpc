@@ -1,7 +1,7 @@
 //! Helpers for testing circuit implementations.
 // taken from bellman crate
 
-use bellman_ce::pairing::ff::{Field, PrimeField, PrimeFieldRepr};
+use ff::{Field, PrimeField, PrimeFieldRepr};
 
 use bellman_ce::{
     pairing::Engine, ConstraintSystem, Index, LinearCombination, SynthesisError, Variable,
