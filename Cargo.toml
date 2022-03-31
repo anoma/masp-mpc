@@ -30,7 +30,8 @@ rand = "0.8.5"
 blake2 = "0.10.4"
 bellman = { version = "0.11.1", features = ["groth16", "multicore"] }
 ff = "0.11.0" 
-bls12_381 = "0.6"
+#bls12_381 = "0.6"
+bls12_381 = { git = "https://github.com/joebebel/bls12_381", branch = "joe/fast_subgroup_check"}
 exitcode = "1.1.2"
 hex = "0.4.2"
 itertools = "0.10.3"
