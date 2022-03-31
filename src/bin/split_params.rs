@@ -13,13 +13,13 @@ fn main() {
     let current_params = File::open(&args[1]).expect("couldn't open params");
     let mut current_params = BufReader::with_capacity(1024 * 1024, current_params);
 
-    let masp_spend = MPCParameters::read(&mut current_params, true)
+    let masp_spend = MPCParameters::read(&mut current_params, false)
         .expect("couldn't deserialize MASP Spend params");
 
-    let masp_output = MPCParameters::read(&mut current_params, true)
+    let masp_output = MPCParameters::read(&mut current_params, false)
         .expect("couldn't deserialize MASP Output params");
 
-    let masp_convert = MPCParameters::read(&mut current_params, true)
+    let masp_convert = MPCParameters::read(&mut current_params, false)
         .expect("couldn't deserialize MASP Convert params");
 
     {

@@ -16,12 +16,12 @@ fn main() {
     let mut new_params = BufReader::with_capacity(1024 * 1024, new_params);
 
     let masp_spend =
-        MPCParameters::read(&mut params, true).expect("couldn't deserialize MASP Spend params");
+        MPCParameters::read(&mut params, false).expect("couldn't deserialize MASP Spend params");
 
     let masp_output =
-        MPCParameters::read(&mut params, true).expect("couldn't deserialize MASP Output params");
+        MPCParameters::read(&mut params, false).expect("couldn't deserialize MASP Output params");
     let masp_convert =
-        MPCParameters::read(&mut params, true).expect("couldn't deserialize MASP Convert params");
+        MPCParameters::read(&mut params, false).expect("couldn't deserialize MASP Convert params");
 
     let new_masp_spend = MPCParameters::read(&mut new_params, true)
         .expect("couldn't deserialize MASP Spend new_params");
