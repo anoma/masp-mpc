@@ -1,6 +1,9 @@
 use masp_phase2::MPCParameters;
 use std::fs::File;
 
+#[cfg(feature = "fast-deserialize")]
+compile_error!("Don't use fast-deserialize for `new` binary");
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 3 {

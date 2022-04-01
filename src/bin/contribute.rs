@@ -4,6 +4,9 @@ use masp_phase2::MPCParameters;
 use std::fs::File;
 use std::fs::OpenOptions;
 
+#[cfg(feature = "fast-deserialize")]
+compile_error!("Don't use fast-deserialize for `contribute` binary");
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 4 && args.len() != 6 {
@@ -19,20 +22,19 @@ fn main() {
     let entropy = &args[3];
     let print_progress = args.len() == 6 && args[4] == "-v";
 
-    let disallow_points_at_infinity = false;
+    //let disallow_points_at_infinity = false;
 
     if print_progress {
         println!("starting");
     }
     // Create an RNG based on a mixture of system randomness and user provided randomness
     let mut rng = {
-        use byteorder::{BigEndian, ReadBytesExt};
         use rand::{Rng, SeedableRng};
         use rand_chacha::ChaChaRng;
         use std::convert::TryInto;
 
         let h = {
-            let mut system_rng = rand::thread_rng(); //OsRng::new().unwrap();
+            let mut system_rng = rand::rngs::OsRng;
             let mut h = Blake2b512::new();
 
             // Gather 1024 bytes of entropy from the system

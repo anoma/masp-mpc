@@ -647,10 +647,11 @@ dependencies = [
 [[package]]
 name = "masp-phase2"
 version = "0.2.3"
-source = "git+https://github.com/heliaxdev/masp-phase2?branch=main#6998848722d3433599e6981fa9ca77babc61ebb7"
+source = "git+https://github.com/heliaxdev/masp-phase2?branch=main#763bc36bd0336c6626c0c1e6050fb76dfd27cb9e"
 dependencies = [
  "bellman",
  "blake2",
+ "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bls12_381 0.6.0 (git+https://github.com/joebebel/bls12_381?branch=joe/fast_subgroup_check)",
  "byteorder",
  "crossbeam",
@@ -670,18 +671,14 @@ version = "0.2.0"
 dependencies = [
  "bellman",
  "blake2",
- "blake2s_simd 1.0.0",
- "bls12_381 0.6.0 (git+https://github.com/joebebel/bls12_381?branch=joe/fast_subgroup_check)",
  "byteorder",
  "exitcode",
- "ff",
+ "getrandom",
  "hex",
  "hex-literal",
  "itertools",
  "masp-phase2",
  "masp_proofs",
- "num-bigint",
- "num-traits",
  "rand",
  "rand_chacha",
  "sha2 0.10.2",

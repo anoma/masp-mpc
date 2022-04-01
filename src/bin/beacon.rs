@@ -5,6 +5,9 @@ use sha2::{Digest, Sha256};
 use std::fs::File;
 use std::fs::OpenOptions;
 
+#[cfg(feature = "fast-deserialize")]
+compile_error!("Don't use fast-deserialize for `beacon` binary");
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 5 {

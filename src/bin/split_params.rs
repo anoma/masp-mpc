@@ -4,6 +4,9 @@ use masp_phase2::MPCParameters;
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 
+#[cfg(feature = "fast-deserialize")]
+compile_error!("Don't use fast-deserialize for `split_params` binary");
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 2 {
