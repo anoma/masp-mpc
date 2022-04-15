@@ -18,7 +18,7 @@ The tool also prints a hash. This hash is what you and others can use to verify 
 
 ## Initiating a new ceremony
 
-Download the "powers of tau" from the phase 1 of the Zcash setup.
+Download the "powers of tau" from [the phase 1 of the Zcash setup](https://download.z.cash/downloads/powersoftau/).
 
 ```
 cargo run --features="verification" --release --bin new <out_params.params> <path/to/phase1radix>
