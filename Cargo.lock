@@ -75,16 +75,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bigint"
-version = "4.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0e8c8a600052b52482eff2cf4d810e462fdff1f656ac1ecb6232132a1ed7def"
-dependencies = [
- "byteorder",
- "crunchy 0.1.6",
-]
-
-[[package]]
 name = "bip0039"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -208,7 +198,7 @@ dependencies = [
 [[package]]
 name = "bls12_381"
 version = "0.6.0"
-source = "git+https://github.com/joebebel/bls12_381?branch=joe/fast_subgroup_check#39f1681c40cf84f06cedb65612de37c5cf8ce44f"
+source = "git+https://github.com/joebebel/bls12_381?branch=joe/fast_subgroup_check#074f2f7e3aef3d07a1b6d72d883ae53bfe7fd307"
 dependencies = [
  "ff",
  "group",
@@ -355,12 +345,6 @@ dependencies = [
 
 [[package]]
 name = "crunchy"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2f4a431c5c9f662e1200b7c7f02c34e91361150e382089a8f2dec3ba680cbda"
-
-[[package]]
-name = "crunchy"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
@@ -434,7 +418,7 @@ checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 [[package]]
 name = "equihash"
 version = "0.1.0"
-source = "git+https://github.com/zcash/librustzcash#43d052d9d8c53c32c8697e3686a24fd5ed72c0f3"
+source = "git+https://github.com/zcash/librustzcash?rev=43c18d0#43c18d000fcbe45363b2d53585d5102841eff99e"
 dependencies = [
  "blake2b_simd",
  "byteorder",
@@ -514,9 +498,9 @@ dependencies = [
 
 [[package]]
 name = "halo2_gadgets"
-version = "0.1.0-beta.2"
+version = "0.1.0-beta.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2701ed8eaf3cd69b720ae78f936a510d9823470e760657b054c0fcddcb07aeed"
+checksum = "7524b798b8b3689a198cd87ee1d22fe3ca007a51d35c4093f32d75c0efc30abe"
 dependencies = [
  "arrayvec 0.7.2",
  "bitvec",
@@ -532,9 +516,9 @@ dependencies = [
 
 [[package]]
 name = "halo2_proofs"
-version = "0.1.0-beta.3"
+version = "0.1.0-beta.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "345005a47afdb143934b86993b6439b2efc22882622eb33ac04dfb35feb51ce3"
+checksum = "e0240b05b791cccfd6451b010b19711280e63b87f495bd84df0103f35c9139e7"
 dependencies = [
  "blake2b_simd",
  "bumpalo",
@@ -578,9 +562,9 @@ dependencies = [
 
 [[package]]
 name = "incrementalmerkletree"
-version = "0.3.0-beta.1"
+version = "0.3.0-beta.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cad6be282c89afc05aebe4801b0d5f9d6b7c556a8f398e447f4b26ea56a6b45e"
+checksum = "5812f2cfa06a7694b842402e9a100529d80fdc3022ead65ad98ce0af0bcd3311"
 dependencies = [
  "serde",
 ]
@@ -596,9 +580,9 @@ dependencies = [
 
 [[package]]
 name = "js-sys"
-version = "0.3.56"
+version = "0.3.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a38fc24e30fd564ce974c02bf1d337caddff65be6cc4735a1f7eab22a7440f04"
+checksum = "671a26f820db17c2a2750743f1dd03bafd15b98c9f30c7c2628c024c05d73397"
 dependencies = [
  "wasm-bindgen",
 ]
@@ -625,9 +609,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.121"
+version = "0.2.124"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "efaa7b300f3b5fe8eb6bf21ce3895e1751d9665086af2d64b42f19701015ff4f"
+checksum = "21a41fed9d98f27ab1c6d161da622a4fa35e8a54a8adc24bbf3ddd0ef70b0e50"
 
 [[package]]
 name = "libm"
@@ -647,7 +631,6 @@ dependencies = [
 [[package]]
 name = "masp-phase2"
 version = "0.2.3"
-source = "git+https://github.com/heliaxdev/masp-phase2?branch=main#763bc36bd0336c6626c0c1e6050fb76dfd27cb9e"
 dependencies = [
  "bellman",
  "blake2",
@@ -671,6 +654,7 @@ version = "0.2.0"
 dependencies = [
  "bellman",
  "blake2",
+ "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder",
  "exitcode",
  "getrandom",
@@ -687,7 +671,7 @@ dependencies = [
 [[package]]
 name = "masp_primitives"
 version = "0.5.0"
-source = "git+https://github.com/heliaxdev/masp#656498e227cc0b72124384ca3b15967a7e5dad10"
+source = "git+https://github.com/heliaxdev/masp#59bf5ca2e3bb195e8f5a609f055054e6cb625199"
 dependencies = [
  "aes",
  "bip0039",
@@ -714,7 +698,7 @@ dependencies = [
 [[package]]
 name = "masp_proofs"
 version = "0.5.0"
-source = "git+https://github.com/heliaxdev/masp#656498e227cc0b72124384ca3b15967a7e5dad10"
+source = "git+https://github.com/heliaxdev/masp#59bf5ca2e3bb195e8f5a609f055054e6cb625199"
 dependencies = [
  "bellman",
  "blake2b_simd",
@@ -805,13 +789,11 @@ checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
 name = "orchard"
-version = "0.1.0-beta.2"
+version = "0.1.0-beta.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b48e6e124c3f7e9ed7f48b29f66069288235cecd16aa6053e98f8aff16efe827"
+checksum = "c3bb8c5f5a0977683b5071650f1e7d91f296e344a796fda585086d5b4b0a74ea"
 dependencies = [
  "aes",
- "arrayvec 0.7.2",
- "bigint",
  "bitvec",
  "blake2b_simd",
  "ff",
@@ -819,6 +801,7 @@ dependencies = [
  "group",
  "halo2_gadgets",
  "halo2_proofs",
+ "hex",
  "incrementalmerkletree",
  "lazy_static",
  "memuse",
@@ -895,18 +878,18 @@ checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.36"
+version = "1.0.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c7342d5883fbccae1cc37a2353b09c87c9b0f3afd73f5fb9bba687a1f733b029"
+checksum = "ec757218438d5fda206afc041538b2f6d889286160d649a86a24d37e1235afd1"
 dependencies = [
  "unicode-xid",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.17"
+version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "632d02bff7f874a36f33ea8bb416cd484b90cc66c1194b1a1110d067a7013f58"
+checksum = "a1feb54ed693b93a84e14094943b84b7c4eae204c512b7ccb95ab0c66d278ad1"
 dependencies = [
  "proc-macro2",
 ]
@@ -949,9 +932,9 @@ dependencies = [
 
 [[package]]
 name = "rayon"
-version = "1.5.1"
+version = "1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c06aca804d41dbc8ba42dfd964f0d01334eceb64314b9ecf7c5fad5188a06d90"
+checksum = "fd249e82c21598a9a426a4e00dd7adc1d640b22445ec8545feef801d1a74c221"
 dependencies = [
  "autocfg",
  "crossbeam-deque",
@@ -961,14 +944,13 @@ dependencies = [
 
 [[package]]
 name = "rayon-core"
-version = "1.9.1"
+version = "1.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d78120e2c850279833f1dd3582f730c4ab53ed95aeaaaa862a2a5c71b1656d8e"
+checksum = "9f51245e1e62e1f1629cbfec37b5793bbabcaeb90f30e94d2ba03564687353e4"
 dependencies = [
  "crossbeam-channel",
  "crossbeam-deque",
  "crossbeam-utils",
- "lazy_static",
  "num_cpus",
 ]
 
@@ -1073,9 +1055,9 @@ checksum = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
 
 [[package]]
 name = "syn"
-version = "1.0.90"
+version = "1.0.91"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "704df27628939572cd88d33f171cd6f896f4eaca85252c6e0a72d8d8287ee86f"
+checksum = "b683b2b825c8eef438b77c36a06dc262294da3d5a5813fac20da149241dcd44d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1148,7 +1130,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6470ab50f482bde894a037a57064480a246dbfdd5960bd65a44824693f08da5f"
 dependencies = [
  "byteorder",
- "crunchy 0.2.2",
+ "crunchy",
  "hex",
  "static_assertions",
 ]
@@ -1192,9 +1174,9 @@ checksum = "fd6fbd9a79829dd1ad0cc20627bf1ed606756a7f77edff7b66b7064f9cb327c6"
 
 [[package]]
 name = "wasm-bindgen"
-version = "0.2.79"
+version = "0.2.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "25f1af7423d8588a3d840681122e72e6a24ddbcb3f0ec385cac0d12d24256c06"
+checksum = "27370197c907c55e3f1a9fbe26f44e937fe6451368324e009cba39e139dc08ad"
 dependencies = [
  "cfg-if",
  "wasm-bindgen-macro",
@@ -1202,9 +1184,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-backend"
-version = "0.2.79"
+version = "0.2.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b21c0df030f5a177f3cba22e9bc4322695ec43e7257d865302900290bcdedca"
+checksum = "53e04185bfa3a779273da532f5025e33398409573f348985af9a1cbf3774d3f4"
 dependencies = [
  "bumpalo",
  "lazy_static",
@@ -1217,9 +1199,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro"
-version = "0.2.79"
+version = "0.2.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f4203d69e40a52ee523b2529a773d5ffc1dc0071801c87b3d270b471b80ed01"
+checksum = "17cae7ff784d7e83a2fe7611cfe766ecf034111b49deb850a3dc7699c08251f5"
 dependencies = [
  "quote",
  "wasm-bindgen-macro-support",
@@ -1227,9 +1209,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-macro-support"
-version = "0.2.79"
+version = "0.2.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfa8a30d46208db204854cadbb5d4baf5fcf8071ba5bf48190c3e59937962ebc"
+checksum = "99ec0dc7a4756fffc231aab1b9f2f578d23cd391390ab27f952ae0c9b3ece20b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1240,9 +1222,9 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-shared"
-version = "0.2.79"
+version = "0.2.80"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d958d035c4438e28c70e4321a2911302f10135ce78a9c7834c0cab4123d06a2"
+checksum = "d554b7f530dee5964d9a9468d95c1f8b8acae4f282807e7d27d4b03099a46744"
 
 [[package]]
 name = "winapi"
@@ -1278,7 +1260,7 @@ dependencies = [
 [[package]]
 name = "zcash_encoding"
 version = "0.0.0"
-source = "git+https://github.com/zcash/librustzcash#43d052d9d8c53c32c8697e3686a24fd5ed72c0f3"
+source = "git+https://github.com/zcash/librustzcash?rev=43c18d0#43c18d000fcbe45363b2d53585d5102841eff99e"
 dependencies = [
  "byteorder",
  "nonempty",
@@ -1299,7 +1281,7 @@ dependencies = [
 [[package]]
 name = "zcash_note_encryption"
 version = "0.1.0"
-source = "git+https://github.com/zcash/librustzcash#43d052d9d8c53c32c8697e3686a24fd5ed72c0f3"
+source = "git+https://github.com/zcash/librustzcash?rev=43c18d0#43c18d000fcbe45363b2d53585d5102841eff99e"
 dependencies = [
  "chacha20",
  "chacha20poly1305",
@@ -1310,7 +1292,7 @@ dependencies = [
 [[package]]
 name = "zcash_primitives"
 version = "0.5.0"
-source = "git+https://github.com/zcash/librustzcash#43d052d9d8c53c32c8697e3686a24fd5ed72c0f3"
+source = "git+https://github.com/zcash/librustzcash?rev=43c18d0#43c18d000fcbe45363b2d53585d5102841eff99e"
 dependencies = [
  "aes",
  "bip0039",
@@ -1336,13 +1318,13 @@ dependencies = [
  "sha2 0.9.9",
  "subtle",
  "zcash_encoding",
- "zcash_note_encryption 0.1.0 (git+https://github.com/zcash/librustzcash)",
+ "zcash_note_encryption 0.1.0 (git+https://github.com/zcash/librustzcash?rev=43c18d0)",
 ]
 
 [[package]]
 name = "zcash_proofs"
 version = "0.5.0"
-source = "git+https://github.com/zcash/librustzcash#43d052d9d8c53c32c8697e3686a24fd5ed72c0f3"
+source = "git+https://github.com/zcash/librustzcash?rev=43c18d0#43c18d000fcbe45363b2d53585d5102841eff99e"
 dependencies = [
  "bellman",
  "blake2b_simd",
