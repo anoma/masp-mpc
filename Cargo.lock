@@ -184,21 +184,9 @@ checksum = "8d696c370c750c948ada61c69a0ee2cbbb9c50b1019ddb86d9317157a99c2cae"
 
 [[package]]
 name = "bls12_381"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d28daeeded7949f1c7c72693377c98473b00be0aa0023760a84a300e4e7c74b"
-dependencies = [
- "ff",
- "group",
- "pairing",
- "rand_core",
- "subtle",
-]
-
-[[package]]
-name = "bls12_381"
-version = "0.6.0"
-source = "git+https://github.com/joebebel/bls12_381?branch=joe/fast_subgroup_check#074f2f7e3aef3d07a1b6d72d883ae53bfe7fd307"
+checksum = "a829c821999c06be34de314eaeb7dd1b42be38661178bc26ad47a4eacebdb0f9"
 dependencies = [
  "ff",
  "group",
@@ -594,7 +582,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2e7baec19d4e83f9145d4891178101a604565edff9645770fc979804138b04c"
 dependencies = [
  "bitvec",
- "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bls12_381",
  "ff",
  "group",
  "rand_core",
@@ -631,11 +619,11 @@ dependencies = [
 [[package]]
 name = "masp-phase2"
 version = "0.2.3"
+source = "git+https://github.com/heliaxdev/masp-phase2?branch=master#d577ff9cfd156d6b99d05e76844fc03112cb1510"
 dependencies = [
  "bellman",
  "blake2",
- "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "bls12_381 0.6.0 (git+https://github.com/joebebel/bls12_381?branch=joe/fast_subgroup_check)",
+ "bls12_381",
  "byteorder",
  "crossbeam",
  "ff",
@@ -654,7 +642,7 @@ version = "0.2.0"
 dependencies = [
  "bellman",
  "blake2",
- "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bls12_381",
  "byteorder",
  "exitcode",
  "getrandom",
@@ -671,14 +659,14 @@ dependencies = [
 [[package]]
 name = "masp_primitives"
 version = "0.5.0"
-source = "git+https://github.com/heliaxdev/masp#59bf5ca2e3bb195e8f5a609f055054e6cb625199"
+source = "git+https://github.com/anoma/masp#535072d52edeb9476f62004c59361470b10621ac"
 dependencies = [
  "aes",
  "bip0039",
  "bitvec",
  "blake2b_simd",
  "blake2s_simd 1.0.0",
- "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bls12_381",
  "byteorder",
  "chacha20poly1305",
  "ff",
@@ -698,11 +686,11 @@ dependencies = [
 [[package]]
 name = "masp_proofs"
 version = "0.5.0"
-source = "git+https://github.com/heliaxdev/masp#59bf5ca2e3bb195e8f5a609f055054e6cb625199"
+source = "git+https://github.com/anoma/masp#535072d52edeb9476f62004c59361470b10621ac"
 dependencies = [
  "bellman",
  "blake2b_simd",
- "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bls12_381",
  "byteorder",
  "directories",
  "ff",
@@ -1299,7 +1287,7 @@ dependencies = [
  "bitvec",
  "blake2b_simd",
  "blake2s_simd 1.0.0",
- "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bls12_381",
  "byteorder",
  "chacha20poly1305",
  "equihash",
@@ -1328,7 +1316,7 @@ source = "git+https://github.com/zcash/librustzcash?rev=43c18d0#43c18d000fcbe453
 dependencies = [
  "bellman",
  "blake2b_simd",
- "bls12_381 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bls12_381",
  "byteorder",
  "directories",
  "ff",
