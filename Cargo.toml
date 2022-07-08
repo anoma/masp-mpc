@@ -26,43 +26,39 @@ name = "verify_transform"
 name = "split_params"
 
 [dependencies]
-rand = "0.4"
-blake2 = "0.9"
-bellman = { version = "0.8", default-features = false, features = ["groth16"] }
-ff = "0.8" 
-bls12_381 = "0.3"
+rand = {version = "0.8.5", default-features = false, features = ["getrandom"] }
+blake2 = "0.10.4"
+bellman = { version = "0.11.1", features = ["groth16", "multicore"] }
 exitcode = "1.1.2"
 hex = "0.4.2"
-itertools = "0.9"
-num-bigint = "0.3"
-num-traits = "0.2.12"
+itertools = "0.10.3"
 byteorder = "1"
-sha2 = "0.9"
-blake2s_simd = "0.5"
+sha2 = "0.10.2"
+rand_chacha = "0.3.1"
+getrandom = { version = "0.2.6", features = ["js"] }
+bls12_381 = "0.6.1"
 
-[dependencies.bellman_ce]
-git = "https://github.com/metastatedev/phase2-bls12_381"
-branch = "main"
+# Imports MPC functions that will parameterize Powers of Tau to Groth16 (in our context MASP zk-SNARK)
+[dependencies.masp-phase2]
+branch = "master"
+git = "https://github.com/heliaxdev/masp-phase2"
 
-[dependencies.phase2]
-git = "https://github.com/metastatedev/phase2-bls12_381"
-branch = "main"
-
-[dependencies.pairing]
-git = "https://github.com/metastatedev/phase2-bls12_381"
-package = "pairing_ce"
-branch = "main"
-
+# Imports the MASP circuits used as input to initialize the MPCParameters
 [dependencies.masp_proofs]
-git = "https://github.com/metastatedev/librustzcash"
-rev = "b64af55d955a1bd0a77389f0b9c66f180815e73b"
+git = "https://github.com/anoma/masp"
 optional = true
 
 [dependencies.hex-literal]
-version = "0.1"
+version = "0.3.4"
 optional = true
 
 [features]
 verification = ["masp_proofs"]
 #u128-support = ["pairing/u128-support"]
 beacon = ["hex-literal"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = true
