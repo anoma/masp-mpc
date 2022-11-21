@@ -32,7 +32,7 @@ required-features = ["verification"]
 [dependencies]
 rand = {version = "0.8.5", default-features = false, features = ["getrandom"] }
 blake2 = "0.10.5"
-bellman = { version = "0.11.2", features = ["groth16", "multicore"] }
+bellman = { version = "0.13.1", features = ["groth16", "multicore"] }
 exitcode = "1.1.2"
 hex = "0.4.2"
 itertools = "0.10.3"
@@ -40,7 +40,7 @@ byteorder = "1"
 sha2 = "0.10.2"
 rand_chacha = "0.3.1"
 getrandom = { version = "0.2.6", features = ["js"] }
-bls12_381 = "0.6.1"
+bls12_381 = "0.7"
 blake2b_simd = "1"
 
 # Imports MPC functions that will parameterize Powers of Tau to Groth16 (in our context MASP zk-SNARK)
@@ -51,6 +51,7 @@ git = "https://github.com/anoma/masp-phase2"
 # Imports the MASP circuits used as input to initialize the MPCParameters
 [dependencies.masp_proofs]
 git = "https://github.com/anoma/masp"
+branch = "joe/2022-11-update"
 optional = true
 
 [dependencies.hex-literal]
