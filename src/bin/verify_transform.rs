@@ -11,9 +11,11 @@ fn main() {
     }
     let params = File::open(&args[1]).unwrap();
     let mut params = BufReader::with_capacity(1024 * 1024, params);
+    params.seek_relative(64).unwrap();
 
     let new_params = File::open(&args[2]).unwrap();
     let mut new_params = BufReader::with_capacity(1024 * 1024, new_params);
+    params.seek_relative(64).unwrap();
 
     let masp_spend =
         MPCParameters::read(&mut params, false).expect("couldn't deserialize MASP Spend params");

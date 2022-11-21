@@ -1,7 +1,7 @@
 [package]
 name = "masp_mpc"
 version = "0.2.0"
-authors = ["Sean Bowe <ewillbefull@gmail.com>", "joe <joe@cryptium.ch>"]
+authors = ["Sean Bowe <ewillbefull@gmail.com>", "joe <joe@heliax.dev>"]
 edition = "2018"
 
 [lib]
@@ -25,10 +25,14 @@ name = "verify_transform"
 [[bin]]
 name = "split_params"
 
+[[bin]]
+name = "verify_contribution"
+required-features = ["verification"]
+
 [dependencies]
 rand = {version = "0.8.5", default-features = false, features = ["getrandom"] }
-blake2 = "0.10.4"
-bellman = { version = "0.11.1", features = ["groth16", "multicore"] }
+blake2 = "0.10.5"
+bellman = { version = "0.11.2", features = ["groth16", "multicore"] }
 exitcode = "1.1.2"
 hex = "0.4.2"
 itertools = "0.10.3"
@@ -37,11 +41,12 @@ sha2 = "0.10.2"
 rand_chacha = "0.3.1"
 getrandom = { version = "0.2.6", features = ["js"] }
 bls12_381 = "0.6.1"
+blake2b_simd = "1"
 
 # Imports MPC functions that will parameterize Powers of Tau to Groth16 (in our context MASP zk-SNARK)
 [dependencies.masp-phase2]
-branch = "master"
-git = "https://github.com/heliaxdev/masp-phase2"
+branch = "joe/nts"
+git = "https://github.com/anoma/masp-phase2"
 
 # Imports the MASP circuits used as input to initialize the MPCParameters
 [dependencies.masp_proofs]
@@ -61,4 +66,3 @@ beacon = ["hex-literal"]
 opt-level = 3
 lto = true
 codegen-units = 1
-debug = true
