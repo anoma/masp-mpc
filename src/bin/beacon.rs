@@ -4,6 +4,8 @@ use masp_phase2::MPCParameters;
 use sha2::{Digest, Sha256};
 use std::fs::File;
 use std::fs::OpenOptions;
+use std::io::BufReader;
+use std::io::Write;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -78,29 +80,33 @@ fn main() {
         .read(true)
         .open(in_params_filename)
         .expect("unable to open.");
-    let mut spend_params = MPCParameters::read(&reader, false).expect("unable to read params");
+    let mut reader = BufReader::with_capacity(1024 * 1024, reader);
+
+    reader.seek_relative(64).unwrap();
+    let mut spend_params = MPCParameters::read(&mut reader, false).expect("unable to read params");
 
     println!("Contributing to Spend {}...", in_params_filename);
 
     let spend_hash = spend_params.contribute(&mut rng, &0);
 
-    let mut output_params = MPCParameters::read(&reader, false).expect("unable to read params");
+    let mut output_params = MPCParameters::read(&mut reader, false).expect("unable to read params");
 
     println!("Contributing to Output {}...", in_params_filename);
 
     let output_hash = output_params.contribute(&mut rng, &0);
 
     let mut convert_params =
-        MPCParameters::read(&reader, false).expect("unable to read MASP Convert params");
+        MPCParameters::read(&mut reader, false).expect("unable to read MASP Convert params");
 
     println!("Contributing to MASP Convert {}...", in_params_filename);
     let mut progress_update_interval: u32 = 0;
-    if print_progress {
+    /*if print_progress {
         let parsed = args[5].parse::<u32>();
         if !parsed.is_err() {
             progress_update_interval = parsed.unwrap();
         }
     }
+    */
     let convert_hash = convert_params.contribute(&mut rng, &progress_update_interval);
 
     let mut h = Blake2b512::new();
@@ -112,7 +118,9 @@ fn main() {
     println!("Contribution hash: 0x{:02x}", h.iter().format(""));
 
     let mut f = File::create(out_params_filename).unwrap();
-
+for _ in 0..64 {
+    f.write_all(&[0u8]);
+}
     println!("Writing MASP Spend parameters to {}.", out_params_filename);
     spend_params
         .write(&mut f)
