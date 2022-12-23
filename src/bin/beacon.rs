@@ -9,22 +9,13 @@ use std::io::Write;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    if args.len() != 7 {
-        println!("Usage: \n<in_params.params> <in_btc_hash> <in_eth_hash> <in_zec_hash> <in_num_iterations_exp> <out_params.params>");
+    if args.len() != 3 {
+        println!("Usage: \n<in_params.params> <out_params.params>");
         std::process::exit(exitcode::USAGE);
     }
     let in_params_filename = &args[1];
-    let btc_hash = &args[2];
-    let eth_hash = &args[3];
-    let zec_hash = &args[4];
-    let num_iterations_exp = &args[5].parse::<usize>().unwrap();
-    let out_params_filename = &args[6];
+    let out_params_filename = &args[2];
     let print_progress = true;
-
-    if *num_iterations_exp < 10 || *num_iterations_exp > 63 {
-        println!("in_num_iterations_exp should be in [10, 63] range");
-        std::process::exit(exitcode::DATAERR);
-    }
 
     let disallow_points_at_infinity = false;
 
@@ -34,50 +25,13 @@ fn main() {
         use rand::SeedableRng;
         use rand_chacha::ChaChaRng;
         use std::convert::TryInto;
-
-        let mut cur_hash = {
-            let mut h = Sha256::new();
-
-            for beacon_hash in [btc_hash, eth_hash, zec_hash] {
-                // The hash used for the beacon
-                let hash_result = hex::decode(beacon_hash);
-                if hash_result.is_err() {
-                    println!("Beacon hash should be in hexadecimal format");
-                    std::process::exit(exitcode::DATAERR);
-                }
-                let hash_result = hash_result.unwrap();
-                if hash_result.len() != 32 {
-                    println!("Beacon hash should be 32 bytes long");
-                    std::process::exit(exitcode::DATAERR);
-                }
-                h.update(&hash_result);
-            }
-            h.finalize().to_vec()
-        };
+        
+        // The hash after 2^42 iterations of SHA256 on the randomness beacon
+        let mut cur_hash = hex::decode("8ecb1e82f5e01c8c0353e35bf0a782f21528f14154faa57436a89f02dd260224").unwrap();
 
         if cur_hash.len() != 32 {
             println!("Beacon hash should be 32 bytes long");
             std::process::exit(exitcode::DATAERR);
-        }
-        // Performs 2^n hash iterations over it
-        let n: usize = *num_iterations_exp;
-
-        for i in 0..(1u64 << n) {
-            // Print 1024 of the interstitial states
-            // so that verification can be
-            // parallelized
-
-            if i % (1u64 << (n - 10)) == 0 {
-                print!("{}: ", i);
-                for b in cur_hash.iter() {
-                    print!("{:02x}", b);
-                }
-                println!("");
-            }
-
-            let mut h = Sha256::new();
-            h.update(&cur_hash);
-            cur_hash = h.finalize().to_vec();
         }
 
         print!("Final result of beacon: ");
